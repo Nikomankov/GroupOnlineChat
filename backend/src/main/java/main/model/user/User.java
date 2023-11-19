@@ -19,4 +19,10 @@ public class User {
     private String name;
     private String ip;
     private String sessionId;
+
+    public User(String name, String ip, String sessionId){
+        this.name = name;
+        this.ip = ip;
+        this.sessionId = sessionId;
+    }
 }

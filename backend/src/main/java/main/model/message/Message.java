@@ -8,6 +8,12 @@ import main.model.user.User;
 
 import java.time.LocalDateTime;
 
+
+    /*
+    TODO:
+        -add a variable "dialogId" that determines which dialog the message belongs to
+    */
+
 @Getter
 @Setter
 @Entity
@@ -21,4 +27,10 @@ public class Message {
     @ManyToOne
     @JoinColumn(name="user_id", referencedColumnName = "id", nullable = false)
     private User user;
+
+    public Message(String message, LocalDateTime dateTime, User user){
+        this.message = message;
+        this.dateTime = dateTime;
+        this.user = user;
+    }
 }

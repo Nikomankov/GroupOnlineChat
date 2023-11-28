@@ -1,19 +1,26 @@
 package main.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import main.service.DefaultService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
+@RequestMapping("/")
 public class DefaultController {
 
-    @RequestMapping("/init")
-    public void init(){
+    @Autowired
+    DefaultService defaultService;
 
+    @GetMapping
+    public ResponseEntity init(HttpServletRequest request){
+        return defaultService.init(request);
     }
 
-    @PostMapping("/auth")
-    public boolean auth(){
-        return true;
+    @PostMapping
+    public ResponseEntity auth(@RequestBody String name, HttpServletRequest request){
+        return defaultService.auth(name, request);
     }
 }

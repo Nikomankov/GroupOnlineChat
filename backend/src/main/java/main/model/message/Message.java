@@ -28,9 +28,13 @@ public class Message {
     @JoinColumn(name="user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
-    public Message(String message, LocalDateTime dateTime, User user){
+    public Message(String message, User user){
         this.message = message;
-        this.dateTime = dateTime;
+        this.dateTime = LocalDateTime.now();
         this.user = user;
+    }
+    public Message(String message){
+        this.message = message;
+        this.dateTime = LocalDateTime.now();
     }
 }

@@ -7,13 +7,15 @@ import main.model.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class MessageServiceImpl implements MessageService {
 
     @Autowired
@@ -46,8 +48,10 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public ResponseEntity<Message> saveMessage(Message message) {
-        Optional<User> user = userRepository.findById(message.getUser().getId());
+    public ResponseEntity<Message> saveMessage(String messageContent) {
+        String sessionId = RequestContextHolder.getRequestAttributes().getSessionId();
+        Optional<User> user = userRepository.findBySessionId(sessionId);
+        Message message = new Message(messageContent);
         if(user.isPresent()){
             message.setDateTime(LocalDateTime.now());
             message.setUser(user.get());

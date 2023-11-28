@@ -1,7 +1,6 @@
 package main.controller;
 
 import main.model.user.User;
-import main.model.user.UserRepository;
 import main.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,24 +9,25 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller("/user/")
+@Controller
+@RequestMapping("/user")
 public class UserController {
-
-    @Autowired
-    private UserService userService;
 
     /*
     TODO:
         -method to find user by ip. If he doesn't find show auth page, else go to chat
-     */
+    */
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/")
-    public ResponseEntity<List<User>> getUsers(){
+    public ResponseEntity<List<User>> getAllUsers(){
         return userService.getUsersList();
     }
 
     @PostMapping("/")
-    public ResponseEntity<User> addUser(@PathVariable User user){
+    public ResponseEntity<User> addUser(@RequestBody User user){
         return userService.saveUser(user);
     }
 

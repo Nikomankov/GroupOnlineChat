@@ -1,7 +1,6 @@
 package main.service;
 
 import main.model.message.Message;
-import main.model.user.User;
 import org.springframework.http.ResponseEntity;
 
 
@@ -10,10 +9,10 @@ import java.util.List;
 
 public interface MessageService {
 
-    public ResponseEntity<Message> saveMessage(Message message);
-    public ResponseEntity deleteMessage(int id);
-    public ResponseEntity<Message> getMessage(int id);
-    public ResponseEntity updateMessage(Message message, int id);
-    public ResponseEntity<List<Message>> getMessages(LocalDateTime last);
-    public ResponseEntity<List<Message>> getMessages();
+    ResponseEntity<Message> saveMessage(String messageContent);
+    ResponseEntity deleteMessage(int id);
+    ResponseEntity<Message> getMessage(int id);
+    ResponseEntity updateMessage(Message message, int id);
+    ResponseEntity<List<Message>> getMessages(LocalDateTime last);
+    ResponseEntity<List<Message>> getMessages();
 }

@@ -15,7 +15,6 @@ public class UserController {
 
     /*
     TODO:
-        -method to find user by ip. If he doesn't find show auth page, else go to chat
     */
 
     @Autowired

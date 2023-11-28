@@ -27,11 +27,18 @@ public class DefaultServiceImpl implements DefaultService{
 
     @Override
     public ResponseEntity auth(String name, HttpServletRequest request) {
+        String ip = request.getRemoteAddr().trim();
         String sessionId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        User user = new User(name, request.getRemoteAddr().trim(), sessionId);
-        userRepository.save(user);
-        if(userRepository.findById(user.getId()).isPresent()){
-            return ResponseEntity.ok().build();
-        } else return ResponseEntity.notFound().build();
+        Optional<User> optionalUser = userRepository.findByIp(ip);
+        if(optionalUser.isPresent()){
+            User user = optionalUser.get();
+            user.setSessionId(sessionId);
+            user.setName(name);
+            userRepository.save(user);
+        } else {
+            User user = new User(name, ip, sessionId);
+            userRepository.save(user);
+        }
+        return ResponseEntity.ok().build();
     }
 }

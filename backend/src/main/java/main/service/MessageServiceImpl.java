@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,24 +23,17 @@ public class MessageServiceImpl implements MessageService {
     private MessageRepository messageRepository;
 
     @Override
-    public ResponseEntity<List<Message>> getMessages(LocalDateTime last) {
-        ArrayList<Message> messages = new ArrayList<>();
-        messageRepository.findAll().forEach(m -> {
-            if(m.getDateTime().isBefore(last)){
-                messages.add(m);
-            }
-        });
-        int end = Math.min(messages.size(), 10);
-        List<Message> result = messages.subList(0, end);
-        if(result.size()>0){
-            return ResponseEntity.ok(result);
+    public ResponseEntity<List<Message>> getNextOlderMessages(LocalDateTime last) {
+        System.out.println("last from Impl = " + last);
+        List<Message> messages = messageRepository.getMessagesOlderThanLast(last);
+        if(messages.size()>0){
+            return ResponseEntity.ok(messages);
         } else return ResponseEntity.notFound().build();
     }
 
     @Override
-    public ResponseEntity<List<Message>> getMessages() {
-        ArrayList<Message> messages = new ArrayList<>();
-        messageRepository.findAll().forEach(messages::add);
+    public ResponseEntity<List<Message>> getAllMessages() {
+        List<Message> messages = messageRepository.findAll();
         if(messages.size()>0){
             return ResponseEntity.ok(messages);
         } else return ResponseEntity.notFound().build();

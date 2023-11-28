@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
@@ -16,9 +17,7 @@ public class MessageController {
 
     /*
     TODO:
-        -get messages from a list in a specific range (i-j)
         -get messages from a specific conversation
-
      */
 
     @Autowired
@@ -26,12 +25,13 @@ public class MessageController {
 
     @GetMapping("/")
     public ResponseEntity<List<Message>> getAllMessages(){
-        return messageService.getMessages();
+        return messageService.getAllMessages();
     }
 
-    @GetMapping("/{last}")
-    public ResponseEntity<List<Message>> getNextOlderMessages(@PathVariable LocalDateTime last){
-        return messageService.getMessages(last);
+    @GetMapping("/nextOlder")
+    public ResponseEntity<List<Message>> getNextOlderMessages(@RequestParam String last){
+        LocalDateTime converted = LocalDateTime.parse(last, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnnnnn"));;
+        return messageService.getNextOlderMessages(converted);
     }
 
     @PostMapping("/")

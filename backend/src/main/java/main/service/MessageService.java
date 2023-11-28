@@ -13,6 +13,7 @@ public interface MessageService {
     ResponseEntity deleteMessage(int id);
     ResponseEntity<Message> getMessage(int id);
     ResponseEntity updateMessage(Message message, int id);
-    ResponseEntity<List<Message>> getMessages(LocalDateTime last);
-    ResponseEntity<List<Message>> getMessages();
+    ResponseEntity<List<Message>> getNextOlderMessages(LocalDateTime last);
+    ResponseEntity<List<Message>> getAllMessages();
+
 }

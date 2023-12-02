@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000/")
 @Controller
 @RequestMapping("/message")
 public class MessageController {

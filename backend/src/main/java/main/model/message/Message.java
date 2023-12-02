@@ -23,20 +23,20 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String message;
+    private String content;
     private LocalDateTime dateTime;
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name="user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
-    public Message(String message, User user){
-        this.message = message;
+    public Message(String content, User user){
+        this.content = content;
         this.dateTime = LocalDateTime.now();
         this.user = user;
     }
     public Message(String message){
-        this.message = message;
+        this.content = message;
         this.dateTime = LocalDateTime.now();
     }
 }

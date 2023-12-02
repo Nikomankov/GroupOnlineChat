@@ -79,8 +79,8 @@ public class MessageServiceImpl implements MessageService {
 
         if(optionalMessage.isPresent()){
             Message updatedMessage = optionalMessage.get();
-            if(message.getMessage() != null){
-                updatedMessage.setMessage(message.getMessage());
+            if(message.getContent() != null){
+                updatedMessage.setContent(message.getContent());
                 updatedMessage.setDateTime(LocalDateTime.now());
             }
             messageRepository.save(updatedMessage);

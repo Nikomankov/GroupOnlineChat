@@ -2,13 +2,11 @@ package main.service;
 
 import main.model.message.Message;
 import main.model.message.MessageRepository;
-import main.model.user.User;
-import main.model.user.UserRepository;
+import main.model.message.MessageType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,75 +14,76 @@ import java.util.Optional;
 
 @Service
 public class MessageServiceImpl implements MessageService {
-
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private MessageRepository messageRepository;
+    MessageRepository messageRepository;
+    SimpMessagingTemplate messagingTemplate;
 
-    @Override
-    public ResponseEntity<List<Message>> getNextOlderMessages(LocalDateTime last) {
-        System.out.println("last from Impl = " + last);
-        List<Message> messages = messageRepository.getMessagesOlderThanLast(last);
-        if(messages.size()>0){
-            return ResponseEntity.ok(messages);
-        } else return ResponseEntity.notFound().build();
+    public MessageServiceImpl(SimpMessagingTemplate messagingTemplate){
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Override
-    public ResponseEntity<List<Message>> getAllMessages() {
-        List<Message> messages = messageRepository.findAll();
-        if(messages.size()>0){
-            return ResponseEntity.ok(messages);
-        } else return ResponseEntity.notFound().build();
+    public List<Message> getAllMessages() {
+        return messageRepository.findAll();
     }
 
     @Override
-    public ResponseEntity<Message> saveMessage(String messageContent) {
-        String sessionId = RequestContextHolder.getRequestAttributes().getSessionId();
-        Optional<User> user = userRepository.findBySessionId(sessionId);
-        Message message = new Message(messageContent);
-        if(user.isPresent()){
-            message.setDateTime(LocalDateTime.now());
-            message.setUser(user.get());
-            int id = messageRepository.save(message).getId();
-            Optional<Message> optionalMessage = messageRepository.findById(id);
-            if (optionalMessage.isPresent()){
-                return ResponseEntity.ok(optionalMessage.get());
-            }
+    public Message sendMessage(Message message) {
+        System.out.println("content = " + message.getContent());
+        int id = messageRepository.save(message).getId();
+        message.setDateTime(LocalDateTime.now());
+        message.setId(id);
+        return message;
+    }
+
+    @Override
+    public Message getMessage(int id) {
+        Optional<Message> optionalMessage = messageRepository.findById(id);
+        if(optionalMessage.isPresent()){
+            return optionalMessage.get();
         }
-        return ResponseEntity.notFound().build();
+        return null;
     }
 
     @Override
-    public ResponseEntity deleteMessage(int id) {
-        messageRepository.deleteById(id);
+    public Message updateMessage(Message message, int id) {
+        Optional<Message> optionalMessage = messageRepository.findById(id);
+        if(optionalMessage.isPresent()){
+            Message prevMessage = optionalMessage.get();
+            if(message.getContent() != null){
+                prevMessage.setContent(message.getContent());
+            }
+            prevMessage.setType(message.getType());
+            messageRepository.save(prevMessage);
+            return prevMessage;
+        }
+        return null;
+    }
+
+    @Override
+    public Message deleteMessage(int id) {
         Optional<Message> optionalMessage = messageRepository.findById(id);
         if(!optionalMessage.isPresent()){
-            return ResponseEntity.status(HttpStatus.OK).body(null);
-        } return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            Message message = optionalMessage.get();
+            message.setType(MessageType.DELETE);
+            return message;
+        }
+        return null;
     }
 
     @Override
-    public ResponseEntity<Message> getMessage(int id) {
+    public boolean deleteMessageForever(int id) {
+        messageRepository.deleteById(id);
         Optional<Message> optionalMessage = messageRepository.findById(id);
-        if (optionalMessage.isPresent()){
-            return ResponseEntity.ok(optionalMessage.get());
-        } else return ResponseEntity.notFound().build();
+        return !optionalMessage.isPresent();
     }
 
     @Override
-    public ResponseEntity updateMessage(Message message, int id) {
-        Optional<Message> optionalMessage = messageRepository.findById(id);
-
-        if(optionalMessage.isPresent()){
-            Message updatedMessage = optionalMessage.get();
-            if(message.getContent() != null){
-                updatedMessage.setContent(message.getContent());
-                updatedMessage.setDateTime(LocalDateTime.now());
-            }
-            messageRepository.save(updatedMessage);
-            return ResponseEntity.status(HttpStatus.OK).body(null);
-        } else return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    public List<Message> getNextOlderMessages(LocalDateTime last) {
+        List<Message> messages = messageRepository.getMessagesOlderThanLast(last);
+        if(messages.size()>0){
+            return messages;
+        }
+        return null;
     }
 }

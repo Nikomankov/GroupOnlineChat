@@ -12,16 +12,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/")
 public class DefaultController {
 
-    @Autowired
-    DefaultService defaultService;
-
-    @GetMapping
-    public ResponseEntity init(HttpServletRequest request){
-        return defaultService.init(request);
-    }
-
-    @PostMapping
-    public ResponseEntity auth(@RequestBody String name, HttpServletRequest request){
-        return defaultService.auth(name, request);
-    }
+//    @Autowired
+//    DefaultService defaultService;
+//
+//    @GetMapping
+//    public ResponseEntity init(HttpServletRequest request){
+//        return defaultService.init(request);
+//    }
+//
+//    @PostMapping
+//    public ResponseEntity auth(@RequestBody String name, HttpServletRequest request){
+//        return defaultService.auth(name, request);
+//    }
 }
